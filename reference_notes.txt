@@ -1,0 +1,23 @@
+Primary source: https://arxiv.org/pdf/2506.13593v2
+Reference code inspected:
+https://github.com/giladfrid009/llm-survival/blob/fd78d544a62cae88da97c056b537c497d0763848/synthetic_exp.py
+Commit date: 2025-10-10.
+
+The public script and paper v2 differ. This implementation prioritizes paper v2.
+- Paper: 90% p in [1e-4,1e-3], 10% p in [1e-6,1e-5]. Public script uses 10x.
+- Paper: tau_prior=10^(-1/4). Public script uses 10^(-0.75).
+- Paper: max inverse weight gamma=10. Public script sets min_sample_size=.01
+  (gamma=100).
+- Paper target event: T >= L. Public geometric coverage code uses 1-cdf(L),
+  corresponding to T > L. We evaluate sf(L-1).
+- The experiment-section displayed coverage expression has T <= L, inconsistent
+  with the stated lower-bound objective. We follow the primary definition T >= L.
+- Public Naive code draws a separate selection indicator per candidate quantile.
+  We draw a single geometric C for each prompt and use it for all candidates,
+  corresponding to a coherent observed censoring record as defined in Section 4.
+- Public code uses integer geometric quantiles. We use integer quantiles too and
+  explicitly disclose finite-grid approximation relative to continuous theory.
+- We compute allocation costs on calibration prompts, where budget is incurred.
+- We use known C for primary reproduction and learned C as an extra comparison.
+- We independently implemented KKT water-level bisection and calibration;
+  this package does not copy the author's source script.
